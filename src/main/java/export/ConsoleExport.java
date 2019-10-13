@@ -14,12 +14,9 @@ public class ConsoleExport implements Export {
 
     @Override
     public void export() {
-
         String now = new Date().toString();
-
         storage.getAlcoholics().forEach(alcoholic -> {
             System.out.println(now + ";" + alcoholic.toString());
         });
-
     }
 }

@@ -13,7 +13,6 @@ public class InMemoryStorage implements Storage {
     private ArrayList<Alcoholic> alcoholics;
 
     public InMemoryStorage() {
-
         chatIds = new HashSet<>();
         messages = new ArrayList<>();
         alcoholics = new ArrayList<>();

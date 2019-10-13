@@ -20,8 +20,9 @@ public class Config {
     public static final int EXPORT_HOUR = 19;
     public static final int EXPORT_MINUTE = 10;
 
-    public static Long getPeriod() {
+    public static final String POLL_MESSAGE = "Have you been drinking?";
 
+    public static Long getPeriod() {
         return 1000L * 60L * 60L * 24L;
     }
 

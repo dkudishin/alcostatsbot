@@ -93,5 +93,4 @@ public class AlcoStatsBot extends TelegramLongPollingBot {
         return Config.BOT_TOKEN;
     }
 
-
 }

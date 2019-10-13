@@ -20,7 +20,6 @@ public class DeleteUnprocessedMessageTimerTask extends TimerTask {
 
     @Override
     public void run() {
-
         for (Message m : storage.getMessages()) {
             DeleteMessage deleteMessage = new DeleteMessage(m.getChatId(), m.getMessageId());
             try {

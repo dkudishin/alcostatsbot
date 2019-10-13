@@ -1,5 +1,6 @@
 package tasks;
 
+import common.Config;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -27,19 +28,7 @@ public class EverydayPollTimerTask extends TimerTask {
     public void run() {
 
         for (Long chatId : storage.getChatIds()) {
-
-            SendMessage message = new SendMessage()
-                    .setChatId(chatId)
-                    .setText("Have you been drinking?");
-            InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-            List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-            List<InlineKeyboardButton> rowInline = new ArrayList<>();
-            rowInline.add(new InlineKeyboardButton().setText("Yep").setCallbackData("yep"));
-            rowInline.add(new InlineKeyboardButton().setText("Nah").setCallbackData("nah"));
-            rowsInline.add(rowInline);
-            markupInline.setKeyboard(rowsInline);
-            message.setReplyMarkup(markupInline);
-
+            SendMessage message = preparePollMessage(chatId, Config.POLL_MESSAGE);
             try {
                 Message sentPollMessage = bot.execute(message);
                 storage.saveMessage(sentPollMessage);
@@ -47,5 +36,20 @@ public class EverydayPollTimerTask extends TimerTask {
                 e.printStackTrace();
             }
         }
+    }
+
+    private SendMessage preparePollMessage(Long chatId, String pollMessage) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText(pollMessage);
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+        rowInline.add(new InlineKeyboardButton().setText("Yep").setCallbackData("yep"));
+        rowInline.add(new InlineKeyboardButton().setText("Nah").setCallbackData("nah"));
+        rowsInline.add(rowInline);
+        markupInline.setKeyboard(rowsInline);
+        message.setReplyMarkup(markupInline);
+        return message;
     }
 }
