@@ -2,6 +2,7 @@ import common.AlcoStatsBot;
 import common.Config;
 import export.ConsoleExport;
 import export.Export;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -24,20 +25,18 @@ public class Main {
 
     public static void main(String[] args) {
 
-        BotLogger.setLevel(Level.ALL);
-        BotLogger.registerLogger(new ConsoleHandler());
-        try {
-            BotLogger.registerLogger(new BotsFileHandler());
-        } catch (IOException e) {
-            BotLogger.severe("Main", e);
-        }
-
         ApiContextInitializer.init();
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 
-        Storage storage = new InMemoryStorage();
-        AlcoStatsBot alcobot = new AlcoStatsBot(storage);
-        Export export = new ConsoleExport(storage);
+        var applicationContext =
+                new ClassPathXmlApplicationContext("applicationConfig.xml");
+
+        Storage storage = applicationContext.getBean("inMemoryStorage", Storage.class);
+        Export export = applicationContext.getBean("consoleExport", Export.class);
+
+        setupLog();
+
+        TelegramBotsApi telegramBotsApi = applicationContext.getBean("telegramBotsApi", TelegramBotsApi.class);
+        AlcoStatsBot alcobot = applicationContext.getBean("alcoStatsBot", AlcoStatsBot.class);
 
         try {
             telegramBotsApi.registerBot(alcobot);
@@ -53,5 +52,15 @@ public class Main {
         timer.scheduleAtFixedRate(everydayPollTask, Config.getStartDateFor(Config.POLL_HOUR, Config.POLL_MINUTE), Config.getPeriod());
         timer.scheduleAtFixedRate(deleteMessageTask, Config.getStartDateFor(Config.DELETE_HOUR, Config.DELETE_MINUTE), Config.getPeriod());
         timer.scheduleAtFixedRate(exportTask, Config.getStartDateFor(Config.EXPORT_HOUR, Config.EXPORT_MINUTE), Config.getPeriod());
+    }
+
+    private static void setupLog() {
+        BotLogger.setLevel(Level.ALL);
+        BotLogger.registerLogger(new ConsoleHandler());
+        try {
+            BotLogger.registerLogger(new BotsFileHandler());
+        } catch (IOException e) {
+            BotLogger.severe("Main", e);
+        }
     }
 }
