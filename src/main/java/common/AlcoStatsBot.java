@@ -1,5 +1,7 @@
 package common;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -13,6 +15,13 @@ public class AlcoStatsBot extends TelegramLongPollingBot {
     public AlcoStatsBot(Storage storage) {
         this.storage = storage;
     }
+
+    @Getter
+    @Setter
+    private String botName;
+    @Getter
+    @Setter
+    private String botAuthToken;
 
     private Storage storage;
 
@@ -85,12 +94,12 @@ public class AlcoStatsBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return Config.BOT_NAME;
+        return this.botName;
     }
 
     @Override
     public String getBotToken() {
-        return Config.BOT_TOKEN;
+        return this.botAuthToken;
     }
 
 }
