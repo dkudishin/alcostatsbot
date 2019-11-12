@@ -1,11 +1,13 @@
 package storage;
 
 import common.Alcoholic;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
+@Component
 public class InMemoryStorage implements Storage {
 
     private HashSet<Long> chatIds;

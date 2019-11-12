@@ -2,6 +2,7 @@ package common;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -10,6 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
 import storage.Storage;
 
+@Component
 public class AlcoStatsBot extends TelegramLongPollingBot {
 
     public AlcoStatsBot(Storage storage) {

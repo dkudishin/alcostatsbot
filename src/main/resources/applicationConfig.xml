@@ -6,18 +6,16 @@
 
     <context:property-placeholder location="application.properties"/>
 
-    <bean id="inMemoryStorage" class="storage.InMemoryStorage"/>
+    <context:component-scan base-package="common"/>
+    <context:component-scan base-package="export"/>
+    <context:component-scan base-package="storage"/>
 
-    <bean id="consoleExport" class="export.ConsoleExport">
-        <constructor-arg ref="inMemoryStorage"/>
-    </bean>
     <bean id="telegramBotsApi" class="org.telegram.telegrambots.meta.TelegramBotsApi">
     </bean>
     <bean id="alcoStatsBot" class="common.AlcoStatsBot">
         <constructor-arg ref="inMemoryStorage"/>
         <property name="botName" value="${BOT_NAME}"/>
         <property name="botAuthToken" value="${BOT_TOKEN}"/>
-
     </bean>
 
 </beans>

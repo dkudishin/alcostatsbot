@@ -1,19 +1,18 @@
 import common.AlcoStatsBot;
 import common.Config;
-import export.ConsoleExport;
 import export.Export;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import org.telegram.telegrambots.meta.logging.BotLogger;
-import org.telegram.telegrambots.meta.logging.BotsFileHandler;
-import storage.InMemoryStorage;
 import storage.Storage;
 import tasks.DeleteUnprocessedMessageTimerTask;
 import tasks.EverydayPollTimerTask;
 import tasks.ExportTimerTask;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.telegram.telegrambots.ApiContextInitializer;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.logging.BotLogger;
+import org.telegram.telegrambots.meta.logging.BotsFileHandler;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -23,15 +22,17 @@ import java.util.logging.Level;
 
 public class Main {
 
+    @Autowired
+    private static Storage storage;
+    @Autowired
+    private static Export export;
+
     public static void main(String[] args) {
 
         ApiContextInitializer.init();
 
         var applicationContext =
                 new ClassPathXmlApplicationContext("applicationConfig.xml");
-
-        Storage storage = applicationContext.getBean("inMemoryStorage", Storage.class);
-        Export export = applicationContext.getBean("consoleExport", Export.class);
 
         setupLog();
 
