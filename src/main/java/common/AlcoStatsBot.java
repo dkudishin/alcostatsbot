@@ -2,6 +2,8 @@ package common;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,15 +16,19 @@ import storage.Storage;
 @Component
 public class AlcoStatsBot extends TelegramLongPollingBot {
 
+    @Autowired
     public AlcoStatsBot(Storage storage) {
         this.storage = storage;
     }
 
     @Getter
     @Setter
+    @Value("${BOT_NAME}")
     private String botName;
+
     @Getter
     @Setter
+    @Value("${BOT_TOKEN}")
     private String botAuthToken;
 
     private Storage storage;

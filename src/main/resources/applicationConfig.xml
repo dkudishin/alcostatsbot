@@ -12,10 +12,6 @@
 
     <bean id="telegramBotsApi" class="org.telegram.telegrambots.meta.TelegramBotsApi">
     </bean>
-    <bean id="alcoStatsBot" class="common.AlcoStatsBot">
-        <constructor-arg ref="inMemoryStorage"/>
-        <property name="botName" value="${BOT_NAME}"/>
-        <property name="botAuthToken" value="${BOT_TOKEN}"/>
-    </bean>
+    <bean id="alcoStatsBot" class="common.AlcoStatsBot"/>
 
 </beans>
