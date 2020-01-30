@@ -1,24 +1,24 @@
-
+package statsbot;
 
 /*
-<context:component-scan base-package="common"/>
-    <context:component-scan base-package="export"/>
-    <context:component-scan base-package="storage"/>
+<context:component-scan base-package="statsbot.common"/>
+    <context:component-scan base-package="statsbot.export"/>
+    <context:component-scan base-package="statsbot.storage"/>
 
     <bean id="telegramBotsApi" class="org.telegram.telegrambots.meta.TelegramBotsApi">
     </bean>
-    <bean id="alcoStatsBot" class="common.AlcoStatsBot"/>
+    <bean id="alcoStatsBot" class="statsbot.common.AlcoStatsBot"/>
  */
 
-import common.AlcoStatsBot;
-import export.ConsoleExport;
-import export.Export;
+import statsbot.common.AlcoStatsBot;
+import statsbot.export.ConsoleExport;
+import statsbot.export.Export;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import storage.InMemoryStorage;
-import storage.Storage;
+import statsbot.storage.InMemoryStorage;
+import statsbot.storage.Storage;
 
 @Configuration
 @PropertySource("classpath:application.properties")

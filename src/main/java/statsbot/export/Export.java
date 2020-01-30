@@ -1,4 +1,4 @@
-package export;
+package statsbot.export;
 
 public interface Export {
 

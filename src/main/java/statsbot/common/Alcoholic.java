@@ -1,4 +1,4 @@
-package common;
+package statsbot.common;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package common;
+package statsbot.common;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
-import storage.Storage;
+import statsbot.storage.Storage;
 
 @Component
 public class AlcoStatsBot extends TelegramLongPollingBot {

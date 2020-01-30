@@ -20,7 +20,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>statsbot.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

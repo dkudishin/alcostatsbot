@@ -1,6 +1,6 @@
-package storage;
+package statsbot.storage;
 
-import common.Alcoholic;
+import statsbot.common.Alcoholic;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.ArrayList;

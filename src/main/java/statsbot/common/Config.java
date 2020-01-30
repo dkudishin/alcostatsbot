@@ -1,4 +1,4 @@
-package common;
+package statsbot.common;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,6 +7,10 @@ import java.time.ZoneOffset;
 import java.util.Date;
 
 public class Config {
+
+    private Config() {
+        throw new IllegalStateException("Utility class should not be instantiated");
+    }
 
     public static final String BOT_TOKEN = System.getenv("ALCOBOT_TOKEN");
     public static final String BOT_NAME = "AlcoStatsBot";

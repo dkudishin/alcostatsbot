@@ -1,10 +1,10 @@
-package tasks;
+package statsbot.tasks;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import storage.Storage;
+import statsbot.storage.Storage;
 
 import java.util.TimerTask;
 

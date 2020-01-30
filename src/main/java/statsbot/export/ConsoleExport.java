@@ -1,8 +1,8 @@
-package export;
+package statsbot.export;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import storage.Storage;
+import statsbot.storage.Storage;
 
 import java.util.Date;
 
@@ -19,8 +19,6 @@ public class ConsoleExport implements Export {
     @Override
     public void export() {
         String now = new Date().toString();
-        storage.getAlcoholics().forEach(alcoholic -> {
-            System.out.println(now + ";" + alcoholic.toString());
-        });
+        storage.getAlcoholics().forEach(alcoholic -> System.out.println(now + ";" + alcoholic.toString()));
     }
 }

@@ -1,14 +1,15 @@
-import common.AlcoStatsBot;
-import common.Config;
-import export.Export;
+package statsbot;
+
+import statsbot.common.AlcoStatsBot;
+import statsbot.common.Config;
+import statsbot.export.Export;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import storage.Storage;
-import tasks.DeleteUnprocessedMessageTimerTask;
-import tasks.EverydayPollTimerTask;
-import tasks.ExportTimerTask;
+import statsbot.storage.Storage;
+import statsbot.tasks.DeleteUnprocessedMessageTimerTask;
+import statsbot.tasks.EverydayPollTimerTask;
+import statsbot.tasks.ExportTimerTask;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -39,7 +40,7 @@ public class Main {
         setupLog();
 
         TelegramBotsApi telegramBotsApi = applicationContext.getBean("telegramBotsApi", TelegramBotsApi.class);
-        AlcoStatsBot alcobot = applicationContext.getBean("alcoStatsBot", AlcoStatsBot.class);
+        AlcoStatsBot alcobot = applicationContext.getBean(AlcoStatsBot.class);
 
         try {
             telegramBotsApi.registerBot(alcobot);
@@ -47,6 +48,10 @@ public class Main {
             e.printStackTrace();
         }
 
+        setTimers(alcobot);
+    }
+
+    private static void setTimers(AlcoStatsBot alcobot) {
         TimerTask everydayPollTask = new EverydayPollTimerTask(alcobot, storage);
         TimerTask deleteMessageTask = new DeleteUnprocessedMessageTimerTask(alcobot, storage);
         TimerTask exportTask = new ExportTimerTask(export);
@@ -63,7 +68,7 @@ public class Main {
         try {
             BotLogger.registerLogger(new BotsFileHandler());
         } catch (IOException e) {
-            BotLogger.severe("Main", e);
+            BotLogger.severe("statsbot.Main", e);
         }
     }
 }
