@@ -1,6 +1,7 @@
 import common.AlcoStatsBot;
 import common.Config;
 import export.Export;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import storage.Storage;
 import tasks.DeleteUnprocessedMessageTimerTask;
 import tasks.EverydayPollTimerTask;
@@ -20,6 +21,7 @@ import java.util.TimerTask;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
+
 public class Main {
 
     @Autowired
@@ -32,7 +34,7 @@ public class Main {
         ApiContextInitializer.init();
 
         var applicationContext =
-                new ClassPathXmlApplicationContext("applicationConfig.xml");
+                new AnnotationConfigApplicationContext(AppConfig.class);
 
         setupLog();
 
