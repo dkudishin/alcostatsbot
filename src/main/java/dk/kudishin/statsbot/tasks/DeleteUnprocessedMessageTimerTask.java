@@ -1,10 +1,10 @@
-package statsbot.tasks;
+package dk.kudishin.statsbot.tasks;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import statsbot.storage.Storage;
+import dk.kudishin.statsbot.storage.Storage;
 
 import java.util.TimerTask;
 

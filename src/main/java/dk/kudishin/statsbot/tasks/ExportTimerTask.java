@@ -1,6 +1,6 @@
-package statsbot.tasks;
+package dk.kudishin.statsbot.tasks;
 
-import statsbot.export.Export;
+import dk.kudishin.statsbot.export.Export;
 
 import java.util.TimerTask;
 

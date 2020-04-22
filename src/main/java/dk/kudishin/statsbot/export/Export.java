@@ -1,4 +1,4 @@
-package statsbot.export;
+package dk.kudishin.statsbot.export;
 
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package statsbot.common;
+package dk.kudishin.statsbot.common;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,13 +11,13 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
-import statsbot.storage.Storage;
+import dk.kudishin.statsbot.storage.Storage;
 
 @Component
-public class AlcoStatsBot extends TelegramLongPollingBot {
+public class StatsBot extends TelegramLongPollingBot {
 
     @Autowired
-    public AlcoStatsBot(Storage storage) {
+    public StatsBot(Storage storage) {
         this.storage = storage;
     }
 
@@ -54,21 +54,21 @@ public class AlcoStatsBot extends TelegramLongPollingBot {
             processStartCommand(update, chatId);
 
         } else {
-            BotLogger.info("AlcoStatsBot", "Ignoring user input");
+            BotLogger.info(botName, "Ignoring user input");
         }
     }
 
     private void processStopCommand(Long chatId) {
         storage.removeId(chatId);
-        BotLogger.info("AlcoStatsBot", "Stop command came through");
+        BotLogger.info(botName, "Stop command came through");
     }
 
     private void processStartCommand(Update update, Long chatId) {
         storage.saveId(chatId);
-        Alcoholic alcoholic = new Alcoholic(update.getMessage().getFrom());
-        alcoholic.setDrunkToday(false);
-        storage.addAlcoholic(alcoholic);
-        BotLogger.info("AlcoStatsBot", "Subscribing a new user");
+        BotUser botUser = new BotUser(update.getMessage().getFrom());
+        botUser.setDrunkToday(false);
+        storage.addBotUser(botUser);
+        BotLogger.info(botName, "Subscribing a new user");
     }
 
     private void processCallbackQuery(Update update) {
@@ -81,9 +81,9 @@ public class AlcoStatsBot extends TelegramLongPollingBot {
         if (callData.equals("yep")) {
             message.setText("Oh, you actually have. See you next time.");
 
-            storage.getAlcoholics().forEach(alcoholic -> {
-                if (alcoholic.getId() == chatId)
-                    alcoholic.setDrunkToday(true);
+            storage.getBotUsers().forEach(botUser -> {
+                if (botUser.getId() == chatId)
+                    botUser.setDrunkToday(true);
             });
 
         } else if (callData.equals("nah")) {
