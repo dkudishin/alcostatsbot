@@ -1,6 +1,6 @@
-package statsbot.storage;
+package dk.kudishin.statsbot.storage;
 
-import statsbot.common.Alcoholic;
+import dk.kudishin.statsbot.common.BotUser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -12,12 +12,12 @@ public class InMemoryStorage implements Storage {
 
     private HashSet<Long> chatIds;
     private ArrayList<Message> messages;
-    private ArrayList<Alcoholic> alcoholics;
+    private ArrayList<BotUser> botUsers;
 
     public InMemoryStorage() {
         chatIds = new HashSet<>();
         messages = new ArrayList<>();
-        alcoholics = new ArrayList<>();
+        botUsers = new ArrayList<>();
     }
 
     @Override
@@ -51,12 +51,12 @@ public class InMemoryStorage implements Storage {
     }
 
     @Override
-    public void addAlcoholic(Alcoholic alcoholic) {
-        alcoholics.add(alcoholic);
+    public void addBotUser(BotUser botUser) {
+        botUsers.add(botUser);
     }
 
     @Override
-    public ArrayList<Alcoholic> getAlcoholics() {
-        return alcoholics;
+    public ArrayList<BotUser> getBotUsers() {
+        return botUsers;
     }
 }

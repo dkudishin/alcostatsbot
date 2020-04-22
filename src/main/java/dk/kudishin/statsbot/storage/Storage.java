@@ -1,7 +1,7 @@
-package statsbot.storage;
+package dk.kudishin.statsbot.storage;
 
 import org.springframework.stereotype.Component;
-import statsbot.common.Alcoholic;
+import dk.kudishin.statsbot.common.BotUser;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ public interface Storage {
 
     void cleanMessages();
 
-    void addAlcoholic(Alcoholic alcoholic);
+    void addBotUser(BotUser botUser);
 
-    ArrayList<Alcoholic> getAlcoholics();
+    ArrayList<BotUser> getBotUsers();
 
 }

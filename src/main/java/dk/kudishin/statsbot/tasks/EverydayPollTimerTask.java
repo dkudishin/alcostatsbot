@@ -1,13 +1,12 @@
-package statsbot.tasks;
+package dk.kudishin.statsbot.tasks;
 
-import statsbot.common.Config;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import statsbot.storage.Storage;
+import dk.kudishin.statsbot.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +16,20 @@ public class EverydayPollTimerTask extends TimerTask {
 
     private TelegramLongPollingBot bot;
     private Storage storage;
+    private String pollMessage;
 
-    public EverydayPollTimerTask(TelegramLongPollingBot bot, Storage storage) {
+    public EverydayPollTimerTask(TelegramLongPollingBot bot, Storage storage, String pollMessage) {
         super();
         this.bot = bot;
         this.storage = storage;
+        this.pollMessage = pollMessage;
     }
 
     @Override
     public void run() {
 
         for (Long chatId : storage.getChatIds()) {
-            SendMessage message = preparePollMessage(chatId, Config.POLL_MESSAGE);
+            SendMessage message = preparePollMessage(chatId, pollMessage);
             try {
                 Message sentPollMessage = bot.execute(message);
                 storage.saveMessage(sentPollMessage);

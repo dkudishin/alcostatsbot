@@ -1,4 +1,4 @@
-package statsbot.common;
+package dk.kudishin.statsbot.common;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,16 +6,18 @@ import lombok.ToString;
 
 import org.telegram.telegrambots.meta.api.objects.User;
 
+@Getter
+@Setter
 @ToString
-public class Alcoholic  {
+public class BotUser {
 
-    @Getter @Setter private Integer id;
-    @Getter @Setter private String firstName;
-    @Getter @Setter private String lastName;
-    @Getter @Setter private String userName;
-    @Getter @Setter private boolean drunkToday;
+    private Integer id;
+    private String firstName;
+    private String lastName;
+    private String userName;
+    private boolean drunkToday;
 
-    public Alcoholic(User user) {
+    public BotUser(User user) {
 
         this.id = user.getId();
         this.firstName = user.getFirstName();
