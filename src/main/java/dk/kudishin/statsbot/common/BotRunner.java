@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import dk.kudishin.statsbot.common.StatsBot;
-import dk.kudishin.statsbot.export.Export;
 import dk.kudishin.statsbot.storage.Storage;
 import dk.kudishin.statsbot.tasks.DeleteUnprocessedMessageTimerTask;
 import dk.kudishin.statsbot.tasks.EverydayPollTimerTask;
@@ -28,8 +27,6 @@ public class BotRunner {
     private StatsBot bot;
     @Autowired
     private Storage storage;
-    @Autowired
-    private Export export;
 
     @Value("${POLL_MESSAGE}")
     private String pollMessage;
@@ -70,7 +67,7 @@ public class BotRunner {
     private void setTimers() {
         TimerTask everydayPollTask = new EverydayPollTimerTask(bot, storage, pollMessage);
         TimerTask deleteMessageTask = new DeleteUnprocessedMessageTimerTask(bot, storage);
-        TimerTask exportTask = new ExportTimerTask(export);
+        TimerTask exportTask = new ExportTimerTask(storage);
         Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(everydayPollTask, getStartDateFor(pollHour, pollMinute), getPeriod());

@@ -1,19 +1,21 @@
 package dk.kudishin.statsbot.tasks;
 
-import dk.kudishin.statsbot.export.Export;
+import dk.kudishin.statsbot.storage.Storage;
 
+import java.util.Date;
 import java.util.TimerTask;
 
 public class ExportTimerTask extends TimerTask {
 
-    private Export export;
+    private final Storage storage;
 
-    public ExportTimerTask(Export export) {
-        this.export = export;
+    public ExportTimerTask(Storage storage) {
+        this.storage = storage;
     }
 
     @Override
     public void run() {
-        export.export();
+        String now = new Date().toString();
+        storage.getBotUsers().forEach(botUser -> System.out.println(now + ";" + botUser.toString()));
     }
 }

@@ -15,7 +15,7 @@ public class BotUser {
     private String firstName;
     private String lastName;
     private String userName;
-    private boolean drunkToday;
+    private boolean achievementToday;
 
     public BotUser(User user) {
 

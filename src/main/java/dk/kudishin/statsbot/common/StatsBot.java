@@ -1,7 +1,6 @@
 package dk.kudishin.statsbot.common;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,53 +21,50 @@ public class StatsBot extends TelegramLongPollingBot {
     }
 
     @Getter
-    @Setter
     @Value("${BOT_NAME}")
     private String botName;
 
     @Getter
-    @Setter
     @Value("${BOT_TOKEN}")
     private String botAuthToken;
 
-    private Storage storage;
+    private final Storage storage;
 
     @Override
     public void onUpdateReceived(Update update) {
-
         if (update.hasMessage()) {
-            processSimpleMessage(update);
+            preProcessInputMessage(update);
         } else if (update.hasCallbackQuery()) {
             processCallbackQuery(update);
         }
     }
 
-    private void processSimpleMessage(Update update) {
+    private void preProcessInputMessage(Update update) {
+        BotUser botUser = new BotUser(update.getMessage().getFrom());
         String messageText = update.getMessage().getText();
         Long chatId = update.getMessage().getChatId();
 
         if (messageText.equals("/stop")) {
-            processStopCommand(chatId);
+            processStopCommand(chatId, botUser);
 
         } else if (messageText.equals("/start")) {
-            processStartCommand(update, chatId);
+            processStartCommand(chatId, botUser);
 
         } else {
-            BotLogger.info(botName, "Ignoring user input");
+            logBotAction("Text input not supported - ignoring user input", botUser);
         }
     }
 
-    private void processStopCommand(Long chatId) {
+    private void processStopCommand(Long chatId, BotUser botUser) {
         storage.removeId(chatId);
-        BotLogger.info(botName, "Stop command came through");
+        logBotAction("Stop command received  - unsubscribing the user", botUser);
     }
 
-    private void processStartCommand(Update update, Long chatId) {
+    private void processStartCommand(Long chatId, BotUser botUser) {
         storage.saveId(chatId);
-        BotUser botUser = new BotUser(update.getMessage().getFrom());
-        botUser.setDrunkToday(false);
+        botUser.setAchievementToday(false);
         storage.addBotUser(botUser);
-        BotLogger.info(botName, "Subscribing a new user");
+        logBotAction("Start command received - subscribing the user", botUser);
     }
 
     private void processCallbackQuery(Update update) {
@@ -83,7 +79,7 @@ public class StatsBot extends TelegramLongPollingBot {
 
             storage.getBotUsers().forEach(botUser -> {
                 if (botUser.getId() == chatId)
-                    botUser.setDrunkToday(true);
+                    botUser.setAchievementToday(true);
             });
 
         } else if (callData.equals("nah")) {
@@ -110,4 +106,7 @@ public class StatsBot extends TelegramLongPollingBot {
         return this.botAuthToken;
     }
 
+    private void logBotAction(String message, BotUser user) {
+        BotLogger.info(message, user.toString());
+    }
 }
