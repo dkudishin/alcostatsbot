@@ -1,6 +1,6 @@
 package dk.kudishin.statsbot.storage;
 
-import dk.kudishin.statsbot.common.BotUser;
+import dk.kudishin.statsbot.data.BotUser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -10,7 +10,7 @@ import java.util.HashSet;
 @Component
 public class InMemoryStorage implements Storage {
 
-    private HashSet<Long> chatIds;
+    private HashSet<Integer> chatIds;
     private ArrayList<Message> messages;
     private ArrayList<BotUser> botUsers;
 
@@ -21,17 +21,17 @@ public class InMemoryStorage implements Storage {
     }
 
     @Override
-    public HashSet<Long> getChatIds() {
+    public HashSet<Integer> getChatIds() {
         return chatIds;
     }
 
     @Override
-    public void removeId(Long chatId) {
+    public void removeId(Integer chatId) {
         chatIds.remove(chatId);
     }
 
     @Override
-    public void saveId(Long chatId) {
+    public void saveId(Integer chatId) {
         chatIds.add(chatId);
     }
 

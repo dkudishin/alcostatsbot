@@ -1,5 +1,10 @@
 package dk.kudishin.statsbot.tasks;
 
+import dk.kudishin.statsbot.data.PollMessage;
+import dk.kudishin.statsbot.data.PollMessageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -12,36 +17,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
+@Component
 public class EverydayPollTimerTask extends TimerTask {
 
     private TelegramLongPollingBot bot;
     private Storage storage;
+
+    private final PollMessageRepository pollMessageRepository;
+
+    @Value("${POLL_MESSAGE}")
     private String pollMessage;
 
-    public EverydayPollTimerTask(TelegramLongPollingBot bot, Storage storage, String pollMessage) {
+    @Autowired
+    public EverydayPollTimerTask(TelegramLongPollingBot bot, Storage storage, PollMessageRepository pollMessageRepository) {
         super();
         this.bot = bot;
         this.storage = storage;
-        this.pollMessage = pollMessage;
+        this.pollMessageRepository = pollMessageRepository;
     }
 
     @Override
     public void run() {
 
-        for (Long chatId : storage.getChatIds()) {
+        for (Integer chatId : storage.getChatIds()) {
             SendMessage message = preparePollMessage(chatId, pollMessage);
             try {
                 Message sentPollMessage = bot.execute(message);
                 storage.saveMessage(sentPollMessage);
+
+                PollMessage dbMessage = new PollMessage(sentPollMessage.getMessageId(), chatId);
+                pollMessageRepository.save(dbMessage);
+
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private SendMessage preparePollMessage(Long chatId, String pollMessage) {
+    private SendMessage preparePollMessage(Integer chatId, String pollMessage) {
         SendMessage message = new SendMessage()
-                .setChatId(chatId)
+                .setChatId(Long.valueOf(chatId))
                 .setText(pollMessage);
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();

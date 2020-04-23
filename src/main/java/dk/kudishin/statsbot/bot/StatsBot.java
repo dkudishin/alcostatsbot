@@ -1,5 +1,6 @@
-package dk.kudishin.statsbot.common;
+package dk.kudishin.statsbot.bot;
 
+import dk.kudishin.statsbot.data.*;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
 import dk.kudishin.statsbot.storage.Storage;
+
+import java.util.Optional;
 
 @Component
 public class StatsBot extends TelegramLongPollingBot {
@@ -30,6 +33,15 @@ public class StatsBot extends TelegramLongPollingBot {
 
     private final Storage storage;
 
+    @Autowired
+    private BotUserRepository botUserRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private PollMessageRepository pollMessageRepository;
+
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
@@ -41,29 +53,46 @@ public class StatsBot extends TelegramLongPollingBot {
 
     private void preProcessInputMessage(Update update) {
         BotUser botUser = new BotUser(update.getMessage().getFrom());
+        Integer userId = botUser.getUserId();
+
+        Optional<BotUser> some = botUserRepository.findById(userId);
+        if (some.isPresent()) {
+            botUser = some.get();
+        }
+        boolean isUserSubscribed = botUser.getSubscribed().equals("Y");
+
         String messageText = update.getMessage().getText();
-        Long chatId = update.getMessage().getChatId();
 
-        if (messageText.equals("/stop")) {
-            processStopCommand(chatId, botUser);
+        if (messageText.equals("/stop") && isUserSubscribed) {
+            processStopCommand(userId, botUser);
 
-        } else if (messageText.equals("/start")) {
-            processStartCommand(chatId, botUser);
+        } else if (messageText.equals("/start")/* && !isUserSubscribed*/) {
+            processStartCommand(userId, botUser);
 
         } else {
-            logBotAction("Text input not supported - ignoring user input", botUser);
+            logBotAction("Text input not supported or command not applicable - ignoring user input", botUser);
         }
     }
 
-    private void processStopCommand(Long chatId, BotUser botUser) {
+    private void processStopCommand(Integer chatId, BotUser botUser) {
         storage.removeId(chatId);
+
+        //unsubscribe the user
+        botUser.setSubscribed("N");
+        botUserRepository.save(botUser);
+
         logBotAction("Stop command received  - unsubscribing the user", botUser);
     }
 
-    private void processStartCommand(Long chatId, BotUser botUser) {
+    private void processStartCommand(Integer chatId, BotUser botUser) {
         storage.saveId(chatId);
         botUser.setAchievementToday(false);
         storage.addBotUser(botUser);
+
+        //subscribe the user
+        botUser.setSubscribed("Y");
+        botUserRepository.save(botUser);
+
         logBotAction("Start command received - subscribing the user", botUser);
     }
 
@@ -71,26 +100,42 @@ public class StatsBot extends TelegramLongPollingBot {
         String callData = update.getCallbackQuery().getData();
         Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
+        Integer userId = (int) chatId; // userId != chatId for callback, as the callback user is the bot himself
+
+        BotUser botUser = botUserRepository.findById(userId).get();
 
         SendMessage message = new SendMessage().setChatId(chatId);
+
+        Answer userAnswer = new Answer(botUser);
 
         if (callData.equals("yep")) {
             message.setText("Oh, you actually have. See you next time.");
 
-            storage.getBotUsers().forEach(botUser -> {
-                if (botUser.getId() == chatId)
-                    botUser.setAchievementToday(true);
+            storage.getBotUsers().forEach(bUser -> {
+                if (bUser.getUserId() == userId)
+                    bUser.setAchievementToday(true);
             });
+
+            userAnswer.setAnswerFlag("Y");
 
         } else if (callData.equals("nah")) {
             message.setText("No? Ok. See you next time.");
+
+            userAnswer.setAnswerFlag("N");
         }
+
+        answerRepository.save(userAnswer);
 
         var deleteMessage = new DeleteMessage().setChatId(chatId).setMessageId(messageId);
 
         try {
             execute(message);
             execute(deleteMessage);
+
+            PollMessage messageInDb = pollMessageRepository.findById(messageId).get();
+            messageInDb.setProcessedFlag("Y");
+            pollMessageRepository.save(messageInDb);
+
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
