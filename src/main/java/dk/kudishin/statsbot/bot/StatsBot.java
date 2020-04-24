@@ -13,14 +13,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
 import dk.kudishin.statsbot.storage.Storage;
 
-import java.util.Optional;
-
 @Component
 public class StatsBot extends TelegramLongPollingBot {
 
     @Autowired
-    public StatsBot(Storage storage) {
+    public StatsBot(Storage storage, DataProvider dataProvider) {
         this.storage = storage;
+        this.dataProvider = dataProvider;
     }
 
     @Getter
@@ -32,15 +31,7 @@ public class StatsBot extends TelegramLongPollingBot {
     private String botAuthToken;
 
     private final Storage storage;
-
-    @Autowired
-    private BotUserRepository botUserRepository;
-
-    @Autowired
-    private AnswerRepository answerRepository;
-
-    @Autowired
-    private PollMessageRepository pollMessageRepository;
+    private final DataProvider dataProvider;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -55,10 +46,10 @@ public class StatsBot extends TelegramLongPollingBot {
         BotUser botUser = new BotUser(update.getMessage().getFrom());
         Integer userId = botUser.getUserId();
 
-        Optional<BotUser> some = botUserRepository.findById(userId);
-        if (some.isPresent()) {
-            botUser = some.get();
-        }
+        BotUser dbUser = dataProvider.getBotUserById(userId);
+        if(dbUser != null)
+            botUser = dbUser;
+
         boolean isUserSubscribed = botUser.getSubscribed().equals("Y");
 
         String messageText = update.getMessage().getText();
@@ -79,7 +70,7 @@ public class StatsBot extends TelegramLongPollingBot {
 
         //unsubscribe the user
         botUser.setSubscribed("N");
-        botUserRepository.save(botUser);
+        dataProvider.saveBotUser(botUser);
 
         logBotAction("Stop command received  - unsubscribing the user", botUser);
     }
@@ -91,7 +82,7 @@ public class StatsBot extends TelegramLongPollingBot {
 
         //subscribe the user
         botUser.setSubscribed("Y");
-        botUserRepository.save(botUser);
+        dataProvider.saveBotUser(botUser);
 
         logBotAction("Start command received - subscribing the user", botUser);
     }
@@ -102,7 +93,7 @@ public class StatsBot extends TelegramLongPollingBot {
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         Integer userId = (int) chatId; // userId != chatId for callback, as the callback user is the bot himself
 
-        BotUser botUser = botUserRepository.findById(userId).get();
+        BotUser botUser = dataProvider.getBotUserById(userId);
 
         SendMessage message = new SendMessage().setChatId(chatId);
 
@@ -124,7 +115,7 @@ public class StatsBot extends TelegramLongPollingBot {
             userAnswer.setAnswerFlag("N");
         }
 
-        answerRepository.save(userAnswer);
+        dataProvider.saveAnswer(userAnswer);
 
         var deleteMessage = new DeleteMessage().setChatId(chatId).setMessageId(messageId);
 
@@ -132,9 +123,9 @@ public class StatsBot extends TelegramLongPollingBot {
             execute(message);
             execute(deleteMessage);
 
-            PollMessage messageInDb = pollMessageRepository.findById(messageId).get();
+            PollMessage messageInDb =  dataProvider.getPollMessageById(messageId);
             messageInDb.setProcessedFlag("Y");
-            pollMessageRepository.save(messageInDb);
+            dataProvider.savePollMessage(messageInDb);
 
         } catch (TelegramApiException e) {
             e.printStackTrace();

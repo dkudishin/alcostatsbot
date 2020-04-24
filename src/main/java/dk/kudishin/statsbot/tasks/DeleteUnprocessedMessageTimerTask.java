@@ -1,7 +1,7 @@
 package dk.kudishin.statsbot.tasks;
 
+import dk.kudishin.statsbot.data.DataProvider;
 import dk.kudishin.statsbot.data.PollMessage;
-import dk.kudishin.statsbot.data.PollMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -18,13 +18,14 @@ public class DeleteUnprocessedMessageTimerTask extends TimerTask {
 
     private TelegramLongPollingBot bot;
     private Storage storage;
-    private final PollMessageRepository pollMessageRepository;
+
+    private final DataProvider dataProvider;
 
     @Autowired
-    public DeleteUnprocessedMessageTimerTask(TelegramLongPollingBot bot, Storage storage, PollMessageRepository pollMessageRepository) {
+    public DeleteUnprocessedMessageTimerTask(TelegramLongPollingBot bot, Storage storage, DataProvider dataProvider) {
         this.bot = bot;
         this.storage = storage;
-        this.pollMessageRepository = pollMessageRepository;
+        this.dataProvider = dataProvider;
     }
 
     @Override
@@ -39,10 +40,16 @@ public class DeleteUnprocessedMessageTimerTask extends TimerTask {
         }
         storage.cleanMessages();
 
-        List<PollMessage> unprocessedMessages = pollMessageRepository.findByProcessedFlag("N");
-        for (PollMessage unprocessedMesage : unprocessedMessages) {
-            unprocessedMesage.setProcessedFlag("Y");
+        List<PollMessage> unprocessedMessages =  dataProvider.getPollMessageByProcessedFlag("N");
+        for (PollMessage unprocessedMessage : unprocessedMessages) {
+            DeleteMessage deleteMessage = new DeleteMessage(Long.valueOf(unprocessedMessage.getUserId()), unprocessedMessage.getMessageId());
+            try {
+                bot.execute(deleteMessage);
+                unprocessedMessage.setProcessedFlag("Y");
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
-        pollMessageRepository.saveAll(unprocessedMessages);
+        dataProvider.savePollMessages(unprocessedMessages);
     }
 }
