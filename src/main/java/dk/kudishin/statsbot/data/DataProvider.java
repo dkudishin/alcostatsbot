@@ -29,6 +29,10 @@ public class DataProvider {
         return botUserRepository.save(botUser);
     }
 
+    public List<BotUser> getAllBotUsers() {
+        return botUserRepository.findAll();
+    }
+
     public Answer saveAnswer(Answer userAnswer) {
         return answerRepository.save(userAnswer);
     }

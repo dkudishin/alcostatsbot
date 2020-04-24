@@ -1,14 +1,12 @@
 package dk.kudishin.statsbot.data;
 
 import lombok.Data;
-
 import lombok.NoArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @NoArgsConstructor
 @Data
@@ -22,9 +20,6 @@ public class BotUser {
     private String lastName;
     private String userName;
     private String subscribed;
-
-    @Transient
-    private boolean achievementToday;
 
     public BotUser(User user) {
 

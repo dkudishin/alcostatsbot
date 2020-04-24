@@ -28,6 +28,7 @@ public class SendPollMessage implements Action {
     @Value("${POLL_MESSAGE}")
     private String pollMessage;
 
+    @Override
     public void execute() {
 
         for (BotUser user : dataProvider.getBotUsersBySubscribed("Y")) {

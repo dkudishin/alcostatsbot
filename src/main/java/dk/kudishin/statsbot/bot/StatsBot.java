@@ -57,7 +57,7 @@ public class StatsBot extends TelegramLongPollingBot {
         if (messageText.equals("/stop") && isUserSubscribed) {
             processStopCommand(userId, botUser);
 
-        } else if (messageText.equals("/start")/* && !isUserSubscribed*/) {
+        } else if (messageText.equals("/start") && !isUserSubscribed) {
             processStartCommand(userId, botUser);
 
         } else {
@@ -77,7 +77,7 @@ public class StatsBot extends TelegramLongPollingBot {
 
     private void processStartCommand(Integer chatId, BotUser botUser) {
         storage.saveId(chatId);
-        botUser.setAchievementToday(false);
+//        botUser.setAchievementToday(false);
         storage.addBotUser(botUser);
 
         //subscribe the user
@@ -101,20 +101,12 @@ public class StatsBot extends TelegramLongPollingBot {
 
         if (callData.equals("yep")) {
             message.setText("Oh, you actually have. See you next time.");
-
-            storage.getBotUsers().forEach(bUser -> {
-                if (bUser.getUserId() == userId)
-                    bUser.setAchievementToday(true);
-            });
-
             userAnswer.setAnswerFlag("Y");
 
         } else if (callData.equals("nah")) {
             message.setText("No? Ok. See you next time.");
-
             userAnswer.setAnswerFlag("N");
         }
-
         dataProvider.saveAnswer(userAnswer);
 
         var deleteMessage = new DeleteMessage().setChatId(chatId).setMessageId(messageId);

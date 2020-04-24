@@ -20,8 +20,6 @@ public class BotRunner {
 
     @Autowired
     private StatsBot bot;
-    @Autowired
-    private Storage storage;
 
     @Value("${POLL_HOUR}")
     private int pollHour;
@@ -66,12 +64,12 @@ public class BotRunner {
     private void setTimers() {
         Timer timer = new Timer();
 
-        timer.scheduleAtFixedRate(everydayPollTask, getStartDateFor(pollHour, pollMinute), getPeriod());
-        timer.scheduleAtFixedRate(deleteMessageTask, getStartDateFor(deleteHour, deleteMinute), getPeriod());
-        timer.scheduleAtFixedRate(exportTask, getStartDateFor(exportHour, exportMinute), getPeriod());
-//        timer.scheduleAtFixedRate(everydayPollTask, getTestStartDateForNow(5), 1000);
-//        timer.scheduleAtFixedRate(deleteMessageTask, getTestStartDateForNow(10), 10000);
-//        timer.scheduleAtFixedRate(exportTask, getTestStartDateForNow(20), 11000);
+//        timer.scheduleAtFixedRate(everydayPollTask, getStartDateFor(pollHour, pollMinute), getPeriod());
+//        timer.scheduleAtFixedRate(deleteMessageTask, getStartDateFor(deleteHour, deleteMinute), getPeriod());
+//        timer.scheduleAtFixedRate(exportTask, getStartDateFor(exportHour, exportMinute), getPeriod());
+        timer.scheduleAtFixedRate(everydayPollTask, getTestStartDateForNow(5), 1000);
+        timer.scheduleAtFixedRate(deleteMessageTask, getTestStartDateForNow(10), 10000);
+        timer.scheduleAtFixedRate(exportTask, getTestStartDateForNow(15), 5000);
 
     }
 
