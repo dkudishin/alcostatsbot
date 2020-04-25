@@ -1,11 +1,9 @@
 package dk.kudishin.statsbot.bot;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import dk.kudishin.statsbot.storage.Storage;
 import dk.kudishin.statsbot.tasks.DeleteUnprocessedMessageTimerTask;
 import dk.kudishin.statsbot.tasks.EverydayPollTimerTask;
 import dk.kudishin.statsbot.tasks.ExportTimerTask;
@@ -18,8 +16,10 @@ import java.util.Timer;
 @Component
 public class BotRunner {
 
-    @Autowired
-    private StatsBot bot;
+    private final StatsBot bot;
+    private final EverydayPollTimerTask everydayPollTask;
+    private final DeleteUnprocessedMessageTimerTask deleteMessageTask;
+    private final ExportTimerTask exportTask;
 
     @Value("${POLL_HOUR}")
     private int pollHour;
@@ -39,6 +39,12 @@ public class BotRunner {
     @Value("${EXPORT_MINUTE}")
     private int exportMinute;
 
+    public BotRunner(StatsBot bot, EverydayPollTimerTask everydayPollTask, DeleteUnprocessedMessageTimerTask deleteMessageTask, ExportTimerTask exportTask) {
+        this.bot = bot;
+        this.everydayPollTask = everydayPollTask;
+        this.deleteMessageTask = deleteMessageTask;
+        this.exportTask = exportTask;
+    }
 
     @PostConstruct
     public void init() {
@@ -54,20 +60,15 @@ public class BotRunner {
         }
     }
 
-    @Autowired
-    private EverydayPollTimerTask everydayPollTask;
-    @Autowired
-    private DeleteUnprocessedMessageTimerTask deleteMessageTask;
-    @Autowired
-    private ExportTimerTask exportTask;
-
     private void setTimers() {
         Timer timer = new Timer();
 
 //        timer.scheduleAtFixedRate(everydayPollTask, getStartDateFor(pollHour, pollMinute), getPeriod());
 //        timer.scheduleAtFixedRate(deleteMessageTask, getStartDateFor(deleteHour, deleteMinute), getPeriod());
 //        timer.scheduleAtFixedRate(exportTask, getStartDateFor(exportHour, exportMinute), getPeriod());
-        timer.scheduleAtFixedRate(everydayPollTask, getTestStartDateForNow(5), 1000);
+
+//        timer.scheduleAtFixedRate(everydayPollTask, getTestStartDateForNow(5), 1000);
+        timer.scheduleAtFixedRate(everydayPollTask, getTestStartDateForNow(5), getPeriod());
         timer.scheduleAtFixedRate(deleteMessageTask, getTestStartDateForNow(10), 10000);
         timer.scheduleAtFixedRate(exportTask, getTestStartDateForNow(15), 5000);
 

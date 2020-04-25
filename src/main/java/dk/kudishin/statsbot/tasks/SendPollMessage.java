@@ -19,14 +19,15 @@ import java.util.List;
 @Component
 public class SendPollMessage implements Action {
 
-    @Autowired
-    private DataProvider dataProvider;
-
-    @Autowired
-    private StatsBot bot;
-
+    private final DataProvider dataProvider;
+    private final StatsBot bot;
     @Value("${POLL_MESSAGE}")
     private String pollMessage;
+
+    public SendPollMessage(DataProvider dataProvider, StatsBot bot) {
+        this.dataProvider = dataProvider;
+        this.bot = bot;
+    }
 
     @Override
     public void execute() {

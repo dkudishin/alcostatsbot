@@ -11,14 +11,12 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
-import dk.kudishin.statsbot.storage.Storage;
 
 @Component
 public class StatsBot extends TelegramLongPollingBot {
 
     @Autowired
-    public StatsBot(Storage storage, DataProvider dataProvider) {
-        this.storage = storage;
+    public StatsBot(DataProvider dataProvider) {
         this.dataProvider = dataProvider;
     }
 
@@ -30,7 +28,6 @@ public class StatsBot extends TelegramLongPollingBot {
     @Value("${BOT_TOKEN}")
     private String botAuthToken;
 
-    private final Storage storage;
     private final DataProvider dataProvider;
 
     @Override
@@ -66,24 +63,13 @@ public class StatsBot extends TelegramLongPollingBot {
     }
 
     private void processStopCommand(Integer chatId, BotUser botUser) {
-        storage.removeId(chatId);
-
-        //unsubscribe the user
         botUser.setSubscribed("N");
         dataProvider.saveBotUser(botUser);
-
         logBotAction("Stop command received  - unsubscribing the user", botUser);
     }
 
     private void processStartCommand(Integer chatId, BotUser botUser) {
-        storage.saveId(chatId);
-//        botUser.setAchievementToday(false);
-        storage.addBotUser(botUser);
-
-        //subscribe the user
-        botUser.setSubscribed("Y");
         dataProvider.saveBotUser(botUser);
-
         logBotAction("Start command received - subscribing the user", botUser);
     }
 
@@ -94,9 +80,7 @@ public class StatsBot extends TelegramLongPollingBot {
         Integer userId = (int) chatId; // userId != chatId for callback, as the callback user is the bot himself
 
         BotUser botUser = dataProvider.getBotUserById(userId);
-
         SendMessage message = new SendMessage().setChatId(chatId);
-
         Answer userAnswer = new Answer(botUser);
 
         if (callData.equals("yep")) {
