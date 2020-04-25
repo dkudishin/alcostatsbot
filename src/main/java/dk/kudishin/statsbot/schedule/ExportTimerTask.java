@@ -1,5 +1,6 @@
-package dk.kudishin.statsbot.tasks;
+package dk.kudishin.statsbot.schedule;
 
+import dk.kudishin.statsbot.actions.ExportStats;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

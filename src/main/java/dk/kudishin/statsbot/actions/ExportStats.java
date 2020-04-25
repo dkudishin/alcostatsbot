@@ -1,4 +1,4 @@
-package dk.kudishin.statsbot.tasks;
+package dk.kudishin.statsbot.actions;
 
 import dk.kudishin.statsbot.data.DataProvider;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package dk.kudishin.statsbot.tasks;
+package dk.kudishin.statsbot.actions;
 
 import dk.kudishin.statsbot.data.DataProvider;
 import dk.kudishin.statsbot.data.PollMessage;
@@ -11,23 +11,21 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.util.List;
-import java.util.TimerTask;
 
 @Component
-public class DeleteUnprocessedMessageTimerTask extends TimerTask {
-
-    private TelegramLongPollingBot bot;
+public class DeleteUnprocessedMessages implements Action {
 
     private final DataProvider dataProvider;
+    private final TelegramLongPollingBot bot;
 
     @Autowired
-    public DeleteUnprocessedMessageTimerTask(TelegramLongPollingBot bot, DataProvider dataProvider) {
-        this.bot = bot;
+    public DeleteUnprocessedMessages(DataProvider dataProvider, TelegramLongPollingBot bot) {
         this.dataProvider = dataProvider;
+        this.bot = bot;
     }
 
     @Override
-    public void run() {
+    public void execute() {
         List<PollMessage> unprocessedMessages = dataProvider.getPollMessageByProcessedFlag("N");
         for (PollMessage unprocessedMessage : unprocessedMessages) {
             DeleteMessage deleteMessage = new DeleteMessage(Long.valueOf(unprocessedMessage.getUserId()), unprocessedMessage.getMessageId());

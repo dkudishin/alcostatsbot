@@ -1,10 +1,9 @@
-package dk.kudishin.statsbot.tasks;
+package dk.kudishin.statsbot.actions;
 
 import dk.kudishin.statsbot.bot.StatsBot;
 import dk.kudishin.statsbot.data.BotUser;
 import dk.kudishin.statsbot.data.DataProvider;
 import dk.kudishin.statsbot.data.PollMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

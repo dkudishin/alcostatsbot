@@ -1,4 +1,4 @@
-package dk.kudishin.statsbot.tasks;
+package dk.kudishin.statsbot.actions;
 
 public interface Action {
     void execute();

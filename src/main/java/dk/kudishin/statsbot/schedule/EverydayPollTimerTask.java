@@ -1,5 +1,6 @@
-package dk.kudishin.statsbot.tasks;
+package dk.kudishin.statsbot.schedule;
 
+import dk.kudishin.statsbot.actions.SendPollMessage;
 import org.springframework.stereotype.Component;
 
 import java.util.TimerTask;

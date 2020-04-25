@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import dk.kudishin.statsbot.tasks.DeleteUnprocessedMessageTimerTask;
-import dk.kudishin.statsbot.tasks.EverydayPollTimerTask;
-import dk.kudishin.statsbot.tasks.ExportTimerTask;
+import dk.kudishin.statsbot.schedule.DeleteUnprocessedMessageTimerTask;
+import dk.kudishin.statsbot.schedule.EverydayPollTimerTask;
+import dk.kudishin.statsbot.schedule.ExportTimerTask;
 
 import javax.annotation.PostConstruct;
 import java.time.*;
